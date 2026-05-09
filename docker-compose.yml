@@ -1,6 +1,6 @@
 services:
   app:
-    image: ${IMAGE_NAME:-ghcr.io/your-github-owner/gpt-image-canvas:latest}
+    image: ${IMAGE_NAME:-ghcr.io/aiqinxuancai/gpt-image-canvas:latest}
     container_name: gpt-image-canvas
     restart: unless-stopped
     environment:
