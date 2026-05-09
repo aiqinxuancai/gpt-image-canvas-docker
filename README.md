@@ -108,6 +108,11 @@ docker compose pull
 docker compose up -d
 ```
 
+## 故障排查
+
+- 点击“生成到画布”没反应，浏览器控制台报 `crypto.randomUUID is not a function`：
+  这是因为某些访问方式或浏览器环境没有提供这个 API，常见于直接通过 `http://服务器IP:8787` 访问的非安全上下文。当前仓库已经在构建流程里加入前端兼容补丁，重新触发 Actions 构建并拉取新镜像即可修复。
+
 ## 参考
 
 - 上游项目：<https://github.com/mrslimslim/gpt-image-canvas>

@@ -24,6 +24,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Check out wrapper repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
       - name: Check out upstream source
         uses: actions/checkout@v4
         with:
@@ -31,6 +36,12 @@ jobs:
           ref: ${{ env.SOURCE_REF }}
           path: source
           fetch-depth: 1
+
+      - name: Apply compatibility patches
+        shell: bash
+        run: |
+          set -euo pipefail
+          git -C source apply --whitespace=nowarn "$GITHUB_WORKSPACE/patches/0001-web-add-randomuuid-fallback.patch"
 
       - name: Extract image metadata
         id: meta

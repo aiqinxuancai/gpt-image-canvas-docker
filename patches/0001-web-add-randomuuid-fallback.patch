@@ -1,0 +1,55 @@
+diff --git a/apps/web/src/main.tsx b/apps/web/src/main.tsx
+index 143209a..d6411a0 100644
+--- a/apps/web/src/main.tsx
++++ b/apps/web/src/main.tsx
+@@ -5,6 +5,50 @@ import "./styles.css";
+ import { App } from "./App";
+ import { LanguageProvider } from "./i18n";
+ 
++function createRandomUuidFallback(): string {
++  const cryptoObject = globalThis.crypto;
++
++  if (cryptoObject?.getRandomValues) {
++    const bytes = cryptoObject.getRandomValues(new Uint8Array(16));
++    bytes[6] = (bytes[6] & 0x0f) | 0x40;
++    bytes[8] = (bytes[8] & 0x3f) | 0x80;
++
++    const hex = Array.from(bytes, (value) => value.toString(16).padStart(2, "0"));
++    return `${hex.slice(0, 4).join("")}-${hex.slice(4, 6).join("")}-${hex.slice(6, 8).join("")}-${hex.slice(8, 10).join("")}-${hex.slice(10, 16).join("")}`;
++  }
++
++  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (character) => {
++    const randomNibble = Math.floor(Math.random() * 16);
++    const value = character === "x" ? randomNibble : (randomNibble & 0x3) | 0x8;
++    return value.toString(16);
++  });
++}
++
++function ensureRandomUuidSupport(): void {
++  const cryptoObject = globalThis.crypto;
++
++  if (typeof cryptoObject?.randomUUID === "function") {
++    return;
++  }
++
++  if (cryptoObject && typeof cryptoObject === "object") {
++    Object.defineProperty(cryptoObject, "randomUUID", {
++      configurable: true,
++      value: createRandomUuidFallback
++    });
++    return;
++  }
++
++  Object.defineProperty(globalThis, "crypto", {
++    configurable: true,
++    value: {
++      randomUUID: createRandomUuidFallback
++    }
++  });
++}
++
++ensureRandomUuidSupport();
++
+ createRoot(document.getElementById("root") as HTMLElement).render(
+   <React.StrictMode>
+     <LanguageProvider>
