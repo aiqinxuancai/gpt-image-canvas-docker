@@ -1,0 +1,19 @@
+services:
+  app:
+    image: ${IMAGE_NAME:-ghcr.io/your-github-owner/gpt-image-canvas:latest}
+    container_name: gpt-image-canvas
+    restart: unless-stopped
+    environment:
+      HOST: 0.0.0.0
+      PORT: ${PORT:-8787}
+      DATA_DIR: /app/data
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-}
+      OPENAI_IMAGE_MODEL: ${OPENAI_IMAGE_MODEL:-gpt-image-2}
+      OPENAI_IMAGE_TIMEOUT_MS: ${OPENAI_IMAGE_TIMEOUT_MS:-1200000}
+      SQLITE_JOURNAL_MODE: ${SQLITE_JOURNAL_MODE:-DELETE}
+      SQLITE_LOCKING_MODE: ${SQLITE_LOCKING_MODE:-EXCLUSIVE}
+    ports:
+      - "${PORT:-8787}:${PORT:-8787}"
+    volumes:
+      - ./data:/app/data
